@@ -185,7 +185,7 @@ Upload:
 ---
 
 ## Suggested Tech Stack (optional reference)
-- **Frontend:** React + Tailwind CSS
+- **Frontend:** Angular +  CSS
 - **Backend:** Node.js + Express
 - **Database:** MongoDB or PostgreSQL
 - **Auth:** JWT + bcrypt
