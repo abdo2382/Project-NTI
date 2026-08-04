@@ -180,7 +180,7 @@ Upload:
 ✓ Project cover images
 ```
 
-**UI Design Link:** _[Add your Figma/Canva link here once designed — e.g., https://figma.com/file/your-taskflow-design]_
+**UI Design Link:
 
 ---
 
