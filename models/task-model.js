@@ -49,10 +49,16 @@ const taskSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "A task must belong to a user"],
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Task = mongoose.model("Task", taskSchema);

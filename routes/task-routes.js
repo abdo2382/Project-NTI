@@ -1,8 +1,12 @@
 const express = require("express");
 const taskControllers = require("../controllers/task-controllers");
 const multerUpload = require("../middleware/multer-middleware");
+const { protect } = require("../middleware/auth-middleware");
 
 const router = express.Router();
+
+// Every task route requires a logged-in user
+router.use(protect);
 
 router
   .route("/")

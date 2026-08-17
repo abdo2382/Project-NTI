@@ -58,6 +58,7 @@ const createTask = async (req, res) => {
       priority,
       status,
       attachment: req.file?.filename,
+      createdBy: req.user._id,
     });
 
     res.status(201).json({
@@ -91,6 +92,19 @@ const updateTask = async (req, res) => {
       return res.status(404).json({
         status: "fail",
         message: "Task not found",
+      });
+    }
+
+    // Only the task's owner or an admin can update it
+    if (
+      task.createdBy.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin"
+    ) {
+      if (req.file) deleteUploadedFile("tasks", req.file.filename);
+
+      return res.status(403).json({
+        status: "fail",
+        message: "You do not have permission to update this task",
       });
     }
 
@@ -128,14 +142,27 @@ const updateTask = async (req, res) => {
 // DELETE /api/v1/tasks/:id
 const deleteTask = async (req, res) => {
   try {
-    const deletedTask = await Task.findByIdAndDelete(req.params.id);
+    const task = await Task.findById(req.params.id);
 
-    if (!deletedTask) {
+    if (!task) {
       return res.status(404).json({
         status: "fail",
         message: "Task not found",
       });
     }
+
+    // Only the task's owner or an admin can delete it
+    if (
+      task.createdBy.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({
+        status: "fail",
+        message: "You do not have permission to delete this task",
+      });
+    }
+
+    const deletedTask = await Task.findByIdAndDelete(req.params.id);
 
     if (deletedTask.attachment) {
       deleteUploadedFile("tasks", deletedTask.attachment);
