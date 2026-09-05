@@ -4,16 +4,15 @@ const signToken = require("../utils/sign-token");
 // POST /api/v1/auth/signup
 const signup = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    // Role is intentionally NOT taken from req.body — otherwise anyone could
+    // sign up with { "role": "admin" } and grant themselves admin access.
+    // New accounts always start as "user"; promote to admin manually in the DB.
+    const { name, email, password } = req.body;
 
     const newUser = await User.create({
       name,
       email,
       password,
-      // Only allow "admin" role if you explicitly decide to support that at signup.
-      // For a safer default, ignore role from the client entirely:
-      // role: undefined,
-      role,
     });
 
     const token = signToken(newUser._id);
@@ -76,7 +75,20 @@ const login = async (req, res) => {
   }
 };
 
+// GET /api/v1/auth/profile
+// Example protected route: only reachable with a valid JWT (see `protect`
+// middleware). req.user is attached by that middleware after verifying the token.
+const getProfile = async (req, res) => {
+  res.status(200).json({
+    status: "success",
+    data: {
+      user: req.user,
+    },
+  });
+};
+
 module.exports = {
   signup,
   login,
+  getProfile,
 };
